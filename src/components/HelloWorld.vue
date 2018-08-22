@@ -9,6 +9,7 @@
         <li class="location">
           <p>{{ location.d }}</p>
           <p>{{ location.g }}</p>
+          <p>Distance: {{findDistance(location.l._lat, location.l._long)}}</p>
 
         </li>
       </ul>
@@ -21,7 +22,7 @@
 import firebase from 'firebase'
 import 'firebase/firestore' //if use firestore
 import { GeoFirestore } from 'geofirestore'
-//import axios from 'axios'
+import axios from 'axios'
 
 if (!firebase.apps.length) {
   firebase.initializeApp({
@@ -79,6 +80,11 @@ export default {
 
   },
   methods: {
+    findDistance (lat,lng) {
+      const _location1 = new firebase.firestore.GeoPoint(this.clientPosition.lat, this.clientPosition.lng)
+      const _location2 = new firebase.firestore.GeoPoint(lat, lng)
+      return GeoFirestore.distance(_location1, _location2)
+    },
     setLocation () {
       
     },
@@ -121,7 +127,7 @@ export default {
       console.log('finding points...')
       const geoQuery = geoFirestore.query({
         center: new firebase.firestore.GeoPoint(this.clientPosition.lat, this.clientPosition.lng),
-        radius: 5.1
+        radius: 200
         //query: (ref) => ref//.where(key<String>, '==', something<Any>)
       });
       console.log(`Center of query: ${JSON.stringify(geoQuery.center())}`)
